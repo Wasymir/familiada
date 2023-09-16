@@ -8,7 +8,7 @@
             text-align: center;
         }
 
-        #display-forms, #mistakes-forms {
+        #display-forms, #mistakes {
             display: flex;
             flex-direction: row;
             justify-content: space-around;
@@ -19,7 +19,7 @@
         }
 
         button, input[type=submit] {
-            margin: 10px;
+            margin: 5px;
             font-size: larger;
         }
 
@@ -46,47 +46,48 @@
 
 <form id="answers">
     <label for="answer1">Answer:</label><input type="text" id="answer1" name="answer1">
-    <label for="points1">Points:</label><input type="number" min="1" max="99" id="points1" name="points1">
+    <label for="points1">Points:</label><input type="number" min="1" max="100" id="points1" name="points1">
     <label for="hidden1">Hidden:</label><input type="checkbox" id="hidden1" name="hidden1" checked="checked"><br>
     <label for="answer2">Answer:</label><input type="text" id="answer2" name="answer2">
-    <label for="points2">Points:</label><input type="number" min="1" max="99" id="points2" name="points2">
+    <label for="points2">Points:</label><input type="number" min="1" max="100" id="points2" name="points2">
     <label for="hidden2">Hidden:</label><input type="checkbox" id="hidden2" name="hidden2" checked="checked"><br>
     <label for="answer3">Answer:</label><input type="text" id="answer3" name="answer3">
-    <label for="points3">Points:</label><input type="number" min="1" max="99" id="points3" name="points3">
+    <label for="points3">Points:</label><input type="number" min="1" max="100" id="points3" name="points3">
     <label for="hidden3">Hidden:</label><input type="checkbox" id="hidden3" name="hidden3" checked="checked"><br>
     <label for="answer4">Answer:</label><input type="text" id="answer4" name="answer4">
-    <label for="points4">Points:</label><input type="number" min="1" max="99" id="points4" name="points4">
+    <label for="points4">Points:</label><input type="number" min="1" max="100" id="points4" name="points4">
     <label for="hidden4">Hidden:</label><input type="checkbox" id="hidden4" name="hidden4" checked="checked"><br>
     <label for="answer5">Answer:</label><input type="text" id="answer5" name="answer5">
-    <label for="points5">Points:</label><input type="number" min="1" max="99" id="points5" name="points5">
+    <label for="points5">Points:</label><input type="number" min="1" max="100" id="points5" name="points5">
     <label for="hidden5">Hidden:</label><input type="checkbox" id="hidden5" name="hidden5" checked="checked"><br>
     <label for="answer6">Answer:</label><input type="text" id="answer6" name="answer6">
-    <label for="points6">Points:</label><input type="number" min="1" max="99" id="points6" name="points6">
+    <label for="points6">Points:</label><input type="number" min="1" max="100" id="points6" name="points6">
     <label for="hidden6">Hidden:</label><input type="checkbox" id="hidden6" name="hidden6" checked="checked"><br>
     <input type="submit" value="Show answers">
 </form>
 
-<form id="mistakes">
-    <div id="mistakes-forms">
-        <div>
-            <h3>Left mistakes</h3>
-            <input type="radio" id="left0" name="left" value="0" checked="checked"><label for="left0">No mistakes</label><br>
-            <input type="radio" id="left1" name="left" value="1"><label for="left1">1 Small Mistake</label><br>
-            <input type="radio" id="left2" name="left" value="2"><label for="left2">2 Small Mistakes</label><br>
-            <input type="radio" id="left3" name="left" value="3"><label for="left3">3 Small Mistakes</label><br>
-            <input type="radio" id="leftb" name="left" value="big"><label for="leftb">1 Big Mistake</label><br>
-        </div>
-        <div>
-            <h3>Right Mistakes</h3>
-            <input type="radio" id="right0" name="right" value="0" checked="checked"><label for="right0">No mistakes</label><br>
-            <input type="radio" id="right1" name="right" value="1"><label for="right1">1 Small Mistake</label><br>
-            <input type="radio" id="right2" name="right" value="2"><label for="right2">2 Small Mistakes</label><br>
-            <input type="radio" id="right3" name="right" value="3"><label for="right3">3 Small Mistakes</label><br>
-            <input type="radio" id="rightb" name="right" value="big"><label for="rightb">1 Big Mistake</label><br>
-        </div>
+<div id="mistakes">
+    <div>
+        <h3>Left mistakes</h3>
+        <button data-side="left" data-amount="0">Clear Mistakes</button><br>
+        <button data-side="left" data-amount="1">One Mistake</button><br>
+        <button data-side="left" data-amount="2">Two Mistakes</button><br>
+        <button data-side="left" data-amount="3">Three Mistakes</button><br>
+        <button data-side="left" data-amount="big">Big Mistake</button>
     </div>
-    <input type="submit" value="Set Mistakes">
-</form>
+    <div>
+        <h3>Clear Mistakes</h3>
+        <button id="clear-mistakes">Clear</button>
+    </div>
+    <div>
+        <h3>Right Mistakes</h3>
+        <button data-side="right" data-amount="0">Clear Mistakes</button><br>
+        <button data-side="right" data-amount="1">One Mistake</button><br>
+        <button data-side="right" data-amount="2">Two Mistakes</button><br>
+        <button data-side="right" data-amount="3">Three Mistakes</button><br>
+        <button data-side="right" data-amount="big">Big Mistake</button>
+    </div>
+</div>
 
 
 <script>
@@ -131,17 +132,17 @@
             $.post(url);
         });
 
-        $("#mistakes").on("submit", function (event) {
-            event.preventDefault();
-            const left = $("#mistakes input[name=left]:checked").val();
-            const right = $("#mistakes input[name=right]:checked").val();
-            const url = "../send/?target=mistakes&query=" + encodeURIComponent(JSON.stringify({
-                left: left,
-                right: right
-            }));
+        $("#mistakes button").on("click", function () {
+            let url = `../send/?target=mistakes-${$(this).data("side")}&query=${$(this).data("amount")}`
             $.post(url);
         })
 
+        $("#clear-mistakes").on("click", function () {
+            $.post("../send/?target=mistakes-left&query=0")
+            $.post("../send/?target=mistakes-right&query=0")
+
+
+        })
 
     })
 
