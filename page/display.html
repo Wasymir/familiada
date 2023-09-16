@@ -49,7 +49,7 @@
         let ws = new WebSocket("ws://" + location.hostname + ":" + location.port + "/ws/");
         ws.addEventListener("message", function (event) {
             const message = JSON.parse(event.data);
-            if (message.target === team) {
+            if (message.target === "display" + team) {
                 $("#display").text(message.query.toUpperCase());
             }
         })

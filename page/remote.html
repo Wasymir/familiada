@@ -94,13 +94,13 @@
     $(document).ready(function () {
         $("#fst").on("submit", function (event) {
             event.preventDefault();
-            const url = "../send/?target=1&query=" + encodeURIComponent($("#fst-query").val())
+            const url = "../send/?target=display1&query=" + encodeURIComponent($("#fst-query").val())
             fetch(url, {method: "POST"});
         })
 
         $("#snd").on("submit", function (event) {
             event.preventDefault();
-            const url = "../send/?target=2&query=" + encodeURIComponent($("#snd-query").val())
+            const url = "../send/?target=display2&query=" + encodeURIComponent($("#snd-query").val())
             fetch(url, {method: "POST"});
         })
 
