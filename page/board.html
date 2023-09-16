@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Board</title>
+    <script src="../static/jquery-3.7.1.js"></script>
+    <style>
+        @font-face {
+            font-family: 'Familiada';
+            src: url("../static/familiada.ttf");
+        }
+
+        body {
+            background-color: black;
+            font-family: "Familiada", serif;
+            font-size: 7vh;
+            color: yellow;
+        }
+
+        #board {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            table-layout: fixed;
+            width: 95%;
+
+
+        }
+
+        td {
+            min-width: 3%;
+            padding: 0;
+        }
+
+    </style>
+</head>
+<body>
+
+<table id="board">
+
+</table>
+
+<script>
+    $(document).ready(function () {
+        // generate board
+        const board = $("#board");
+        for (let y = 0; y < 10; y++) {
+            let row = $("<tr></tr>");
+            for (let x = 0; x < 30; x++) {
+                row.append($("<td></td>").attr("id", `cell${x}x${y}`));
+            }
+            board.append(row);
+        }
+
+        // helper functions
+
+
+        function print(text, row, column) {
+            for (let y = 0; y < text.length; y++) {
+                for (let x = 0; x < text[y].length; x++) {
+                    $(`#cell${column + x}x${y + row}`).text(text[y][x]);
+                }
+            }
+        }
+
+        function println(text, row, column) {
+            print([text], row, column);
+
+        }
+
+        function clear_all() {
+            $("td").text("&nbsp;");
+        }
+
+        // function
+        function show_sign() {
+            const text = [
+                "aaabac a  a a a  a bac aac bac",
+                "a  a a afga a a  a a a a a a a",
+                "aa aaa a  a a a  a aaa a a aaa",
+                "a  a a a  a a a  a a a a a a a",
+                "a  a a a  a a aa a a a aad a a"
+            ];
+            print(text, 2, 0)
+
+        }
+
+        function show_answers(answers) {
+            let sum = 0;
+            answers.forEach(function (answer, idx) {
+                // print answer number
+                println((idx + 1).toString(), idx + 1, 4);
+                if (answer.hidden) {
+                    // print dots
+                    println("l".repeat(17), idx + 1, 6);
+                    // clear points
+                    println(" ".repeat(2), idx + 1, 24);
+                } else {
+                    // clear dots
+                    println(" ".repeat(17), idx + 1, 6);
+                    // print answer
+                    println(answer.answer.toUpperCase(), idx + 1, 6);
+                    sum += Number(answer.points);
+                    // print points
+                    println(answer.points, idx + 1, 24);
+                }
+            })
+
+            // print sum of unhidden answers points
+            println("SUMA  " + sum, 8, 18);
+        }
+
+        function show_mistakes(mistakes) {
+            // clear sides of the board
+            const whitespace = Array(10).fill(" ".repeat(3))
+            print(whitespace, 0, 0);
+            print(whitespace, 0, 27)
+
+
+            const small = [
+                "fig",
+                " h ",
+                "gjf"
+            ];
+
+            const big = [
+                "c b",
+                "e d",
+                " h ",
+                "b c",
+                "d e"
+            ];
+
+            switch (mistakes.left) {
+                case "3":
+                    print(small, 1, 0);
+                case "2":
+                    print(small, 4, 0);
+                case "1":
+                    print(small, 7, 0);
+                    break;
+                case "big":
+                    print(big, 3, 0);
+                    break;
+            }
+            switch (mistakes.right) {
+                case "3":
+                    print(small, 1, 27);
+                case "2":
+                    print(small, 4, 27);
+                case "1":
+                    print(small, 7, 27);
+                    break;
+                case "big":
+                    print(big, 3, 27);
+                    break;
+            }
+
+        }
+
+        let ws = new WebSocket("ws://" + location.hostname + ":" + location.port + "/ws/");
+        ws.addEventListener("message", function (event) {
+            const message = JSON.parse(event.data);
+            switch (message.target) {
+                case "answers":
+                    const answers = JSON.parse(message.query);
+                    show_answers(answers);
+                    break;
+                case "sign":
+                    show_sign()
+                    break
+                case "clear":
+                    clear_all();
+                    break;
+                case "mistakes":
+                    const mistakes = JSON.parse(message.query);
+                    show_mistakes(mistakes);
+                    break;
+            }
+        })
+
+
+    })
+
+
+</script>
+</body>
+</html>

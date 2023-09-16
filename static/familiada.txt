@@ -1,0 +1,30 @@
+aaa a  a  a a a  a  a  aa   a
+a  a a a  a a a  a a a a a a a
+aa aaa a  a a a  a aaa a a aaa
+a  a a a  a a a  a a a a a a a
+a  a a a  a a aa a a a aa  a a
+
+aaa&emsp;a&emsp;&emsp;a&emsp;&emsp;a&emsp;a&emsp;a&emsp;&emsp;a&emsp;&emsp;a&emsp;&emsp;aa&emsp;&emsp;&emsp;a<br>
+a&emsp;&emsp;a&emsp;a&emsp;a&emsp;&emsp;a&emsp;a&emsp;a&emsp;&emsp;a&emsp;a&emsp;a&emsp;a&emsp;a&emsp;a&emsp;a<br>
+aa&emsp;aaa&emsp;a&emsp;&emsp;a&emsp;a&emsp;a&emsp;&emsp;a&emsp;aaa&emsp;a&emsp;a&emsp;aaa<br>
+a&emsp;&emsp;a&emsp;a&emsp;a&emsp;&emsp;a&emsp;a&emsp;a&emsp;&emsp;a&emsp;a&emsp;a&emsp;a&emsp;a&emsp;a&emsp;a<br>
+a&emsp;&emsp;a&emsp;a&emsp;a&emsp;&emsp;a&emsp;a&emsp;aa&emsp;a&emsp;a&emsp;a&emsp;aa&emsp;&emsp;a&emsp;a<br>
+
+
+
+<tr>
+<td>a</td><td>a</td><td>a</td><td></td><td>a</td><td></td><td></td><td>a</td><td></td><td></td><td>a</td><td></td><td>a</td><td></td><td>a</td><td></td><td></td><td>a</td><td></td><td></td><td>a</td><td></td><td></td><td>a</td><td>a</td><td></td><td></td><td></td><td>a</td>
+</tr>
+<tr>
+<td>a</td><td></td><td></td><td>a</td><td></td><td>a</td><td></td><td>a</td><td></td><td></td><td>a</td><td></td><td>a</td><td></td><td>a</td><td></td><td></td><td>a</td><td></td><td>a</td><td></td><td>a</td><td></td><td>a</td><td></td><td>a</td><td></td><td>a</td><td></td><td>a</td>
+</tr>
+<tr>
+<td>a</td><td>a</td><td></td><td>a</td><td>a</td><td>a</td><td></td><td>a</td><td></td><td></td><td>a</td><td></td><td>a</td><td></td><td>a</td><td></td><td></td><td>a</td><td></td><td>a</td><td>a</td><td>a</td><td></td><td>a</td><td></td><td>a</td><td></td><td>a</td><td>a</td><td>a</td>
+</tr>
+<tr>
+<td>a</td><td></td><td></td><td>a</td><td></td><td>a</td><td></td><td>a</td><td></td><td></td><td>a</td><td></td><td>a</td><td></td><td>a</td><td></td><td></td><td>a</td><td></td><td>a</td><td></td><td>a</td><td></td><td>a</td><td></td><td>a</td><td></td><td>a</td><td></td><td>a</td>
+</tr>
+<tr>
+<td>a</td><td></td><td></td><td>a</td><td></td><td>a</td><td></td><td>a</td><td></td><td></td><td>a</td><td></td><td>a</td><td></td><td>a</td><td>a</td><td></td><td>a</td><td></td><td>a</td><td></td><td>a</td><td></td><td>a</td><td>a</td><td></td><td></td><td>a</td><td></td><td>a</td>
+</tr>
+

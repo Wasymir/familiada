@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Points</title>
+    <script src="../static/jquery-3.7.1.js"></script>
+    <style>
+        @font-face {
+            font-family: 'Familiada';
+            src: url("/static/familiada.ttf");
+        }
+
+        body {
+            background-color: black;
+            font-family: "Familiada", serif;
+            font-size: 30vh;
+            color: yellow;
+        }
+
+        #display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
+
+        #fullscreen {
+            background-color: red;
+            color: black;
+            font-size: 10vh;
+            padding: 5vh;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
+
+    </style>
+</head>
+<body>
+<div id="display">
+</div>
+<button id="fullscreen">&#x26F6;</button>
+<script>
+    $(document).ready(function () {
+        let team = window.prompt("Which team are you on? [1/2]");
+        let ws = new WebSocket("ws://" + location.hostname + ":" + location.port + "/ws/");
+        ws.addEventListener("message", function (event) {
+            const message = JSON.parse(event.data);
+            if (message.target === team) {
+                $("#display").text(message.query.toUpperCase());
+            }
+        })
+
+        $("#fullscreen").on("click", function () {
+            document.body.requestFullscreen();
+            $("#fullscreen").hide();
+        })
+
+    })
+</script>
+</body>
+</html>
