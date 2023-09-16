@@ -94,17 +94,15 @@
         function show_answers(answers) {
             // sum of points for an unhidden answer
             let sum = 0;
+            // clear the area for the answers and points
+            clear(1,4,8,23);
             answers.forEach(function (answer, idx) {
                 // print answer index
                 println((idx + 1).toString(), idx + 1, 4);
                 if (answer.hidden) {
                     // print dots
                     println("l".repeat(17), idx + 1, 6);
-                    // clear number of points for the answer
-                    clear(idx + 1, 24, 1, 2);
                 } else {
-                    // clear dots
-                    clear(idx + 1, 6, 1, 17)
                     // print answer
                     println(answer.answer.toUpperCase(), idx + 1, 6);
                     // Add points for an answer to the sum of unhidden answers points
