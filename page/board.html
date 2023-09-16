@@ -31,12 +31,28 @@
             min-width: 3%;
             padding: 0;
         }
+        #playaudio {
+            background-color: red;
+            color: black;
+            font-size: 10vh;
+            padding: 5vh;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
     </style>
 </head>
 <body>
-
 <table id="board"></table>
-
+<button id="playaudio">&#128266;</button>
+<audio autoplay id="correct-sound">
+    <source src="../static/correct.mp3" type="audio/mpeg">
+</audio>
+<audio autoplay id="mistake-sound">
+    <source src="../static/mistake.mp3" type="audio/mpeg">
+</audio>
 <script>
     $(document).ready(function () {
         // generate board
@@ -161,46 +177,20 @@
                     print(big_mistake, 3, 27);
                     break;
             }
+        }
 
+        function play(sound) {
+            if (sound === "correct") {
+                document.getElementById("correct-sound").play();
+            } else if (sound === "mistake") {
+                document.getElementById("mistake-sound").play();
+            }
 
         }
 
-
-        // function show_mistakes(mistakes) {
-        //     // clear sides of the board
-        //     clear(0, 0, 10, 3);
-        //     clear(0, 27, 10, 3);
-
-
-        //     // print left mistakes
-        //     switch (mistakes.left) {
-        //         case "3":
-        //             print(small, 1, 0);
-        //         case "2":
-        //             print(small, 4, 0);
-        //         case "1":
-        //             print(small, 7, 0);
-        //             break;
-        //         case "big":
-        //             print(big, 3, 0);
-        //             break;
-        //     }
-        //
-        //     // print right mistakes
-        //     switch (mistakes.right) {
-        //         case "3":
-        //             print(small, 1, 27);
-        //         case "2":
-        //             print(small, 4, 27);
-        //         case "1":
-        //             print(small, 7, 27);
-        //             break;
-        //         case "big":
-        //             print(big, 3, 27);
-        //             break;
-        //     }
-        //
-        // }
+        $("#playaudio").on("click", function () {
+            $(this).hide();
+        })
 
         let ws = new WebSocket("ws://" + location.hostname + ":" + location.port + "/ws/");
         ws.addEventListener("message", function (event) {
@@ -221,6 +211,9 @@
                     break;
                 case "mistakes-right":
                     show_right_mistakes(message.query);
+                    break;
+                case "play":
+                    play(message.query);
                     break;
             }
         })

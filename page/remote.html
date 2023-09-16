@@ -14,7 +14,7 @@
             justify-content: space-around;
         }
 
-        #answers > label {
+        label {
             margin: 10px;
         }
 
@@ -47,6 +47,8 @@
 <h1>BOARD CONTROL</h1>
 <button id="sign">Show Sign</button>
 <button id="clear">Clear Screen</button>
+<button id="hide-all">Hide All</button>
+<button id="show-all">Show All</button>
 
 <form id="answers">
     <label for="answer1">Answer:</label><input type="text" id="answer1" name="answer1">
@@ -67,28 +69,40 @@
     <label for="answer6">Answer:</label><input type="text" id="answer6" name="answer6">
     <label for="points6">Points:</label><input type="number" min="1" max="100" id="points6" name="points6">
     <label for="hidden6">Hidden:</label><input type="checkbox" id="hidden6" name="hidden6" checked="checked"><br>
+    <label for="correct-sound">Sound:</label><input type="checkbox" id="correct-sound" name="sound"><br>
     <input type="submit" value="Show answers">
 </form>
 
 <div id="mistakes">
     <div>
         <h3>Left mistakes</h3>
-        <button data-side="left" data-amount="0">Clear Mistakes</button><br>
-        <button data-side="left" data-amount="1">One Mistake</button><br>
-        <button data-side="left" data-amount="2">Two Mistakes</button><br>
-        <button data-side="left" data-amount="3">Three Mistakes</button><br>
+        <button data-side="left" data-amount="0">Clear Mistakes</button>
+        <br>
+        <button data-side="left" data-amount="1">One Mistake</button>
+        <br>
+        <button data-side="left" data-amount="2">Two Mistakes</button>
+        <br>
+        <button data-side="left" data-amount="3">Three Mistakes</button>
+        <br>
         <button data-side="left" data-amount="big">Big Mistake</button>
     </div>
     <div>
-        <h3>Clear Mistakes</h3>
+        <h3>Clear All Mistakes</h3>
         <button id="clear-mistakes">Clear</button>
+        <h3>With Sound</h3>
+        <label for="mistake-sound">Sound:</label><input type="checkbox" id="mistake-sound" name="sound"><br>
+
     </div>
     <div>
         <h3>Right Mistakes</h3>
-        <button data-side="right" data-amount="0">Clear Mistakes</button><br>
-        <button data-side="right" data-amount="1">One Mistake</button><br>
-        <button data-side="right" data-amount="2">Two Mistakes</button><br>
-        <button data-side="right" data-amount="3">Three Mistakes</button><br>
+        <button data-side="right" data-amount="0">Clear Mistakes</button>
+        <br>
+        <button data-side="right" data-amount="1">One Mistake</button>
+        <br>
+        <button data-side="right" data-amount="2">Two Mistakes</button>
+        <br>
+        <button data-side="right" data-amount="3">Three Mistakes</button>
+        <br>
         <button data-side="right" data-amount="big">Big Mistake</button>
     </div>
 </div>
@@ -116,6 +130,15 @@
             $.post("../send/?target=clear&query=");
         });
 
+        $("#hide-all").on("click", function () {
+            $("#answers input:checkbox").not("#correct-sound").prop("checked", true);
+
+        })
+        $("#show-all").on("click", function () {
+            $("#answers input:checkbox").not("#correct-sound").prop("checked", false);
+
+        })
+
         $("#answers").on("submit", function (event) {
             event.preventDefault();
             let answers = [];
@@ -134,11 +157,17 @@
 
             const url = "../send/?target=answers&query=" + encodeURIComponent(JSON.stringify(answers))
             $.post(url);
+            if ($("#correct-sound").is(":checked")) {
+                $.post("../send/?target=play&query=correct");
+            }
         });
 
-        $("#mistakes button").on("click", function () {
+        $("#mistakes button").not("#clear-mistakes").on("click", function () {
             let url = `../send/?target=mistakes-${$(this).data("side")}&query=${$(this).data("amount")}`
             $.post(url);
+            if ($("#mistake-sound").is(":checked")) {
+                $.post("../send/?target=play&query=mistake");
+            }
         })
 
         $("#clear-mistakes").on("click", function () {
