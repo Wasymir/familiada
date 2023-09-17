@@ -27,6 +27,11 @@
             transform: scale(1.5);
         }
 
+        textarea {
+            resize: none;
+            width: 30ch;
+        }
+
     </style>
     <script src="../static/jquery-3.7.1.js"></script>
 </head>
@@ -45,6 +50,7 @@
     </form>
 </div>
 <h1>BOARD CONTROL</h1>
+
 <button id="sign">Show Sign</button>
 <button id="clear">Clear Screen</button>
 <button id="hide-all">Hide All</button>
@@ -107,20 +113,27 @@
     </div>
 </div>
 
+<h3>Show Custom Text</h3>
+<form id="message">
+    <label for="message-prompt">Text:</label><br>
+    <textarea id="message-prompt" cols="30" rows="10" maxlength="300"></textarea><br>
+    <input type="submit" value="Show">
+</form>
 
 <script>
     $(document).ready(function () {
         $("#fst").on("submit", function (event) {
             event.preventDefault();
             const url = "../send/?target=display1&query=" + encodeURIComponent($("#fst-query").val())
-            fetch(url, {method: "POST"});
+            $.post(url);
         })
 
         $("#snd").on("submit", function (event) {
             event.preventDefault();
             const url = "../send/?target=display2&query=" + encodeURIComponent($("#snd-query").val())
-            fetch(url, {method: "POST"});
+            $.post(url);
         })
+
 
         $("#sign").on("click", function () {
             $.post("../send/?target=sign&query=");
@@ -176,6 +189,13 @@
 
 
         })
+
+        $("#message").on("submit", function (event) {
+            event.preventDefault();
+            const url = "../send/?target=message&query=" + encodeURIComponent($("#message-prompt").val());
+            $.post(url);
+        });
+
 
     })
 
