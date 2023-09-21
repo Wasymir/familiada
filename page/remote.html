@@ -18,7 +18,7 @@
             margin: 10px;
         }
 
-        button, input[type=submit] {
+        button, input[type=submit], select, label {
             margin: 5px;
             font-size: larger;
         }
@@ -50,11 +50,23 @@
     </form>
 </div>
 <h1>BOARD CONTROL</h1>
-
 <button id="sign">Show Sign</button>
 <button id="clear">Clear Screen</button>
 <button id="hide-all">Hide All</button>
 <button id="show-all">Show All</button>
+
+
+<form id="save-form">
+    <label for="save-select">Select save:</label>
+    <select id="save-select">
+        <option id="new-save" value="new-question">New Save</option>
+    </select>
+    <input type="submit" value="Save">
+    <input type="submit" value="Load">
+    <input type="submit" value="Delete">
+    <input type="submit" value="Refresh">
+    <input type="submit" value="Clear">
+</form>
 
 <form id="answers">
     <label for="answer1">Answer:</label><input type="text" id="answer1" name="answer1">
@@ -122,82 +134,199 @@
 
 <script>
     $(document).ready(function () {
-        $("#fst").on("submit", function (event) {
-            event.preventDefault();
-            const url = "../send/?target=display1&query=" + encodeURIComponent($("#fst-query").val())
-            $.post(url);
-        })
+            $("#fst").on("submit", function (event) {
+                event.preventDefault();
+                const url = "../send/?target=display1&query=" + encodeURIComponent($("#fst-query").val())
+                $.post(url);
+            })
 
-        $("#snd").on("submit", function (event) {
-            event.preventDefault();
-            const url = "../send/?target=display2&query=" + encodeURIComponent($("#snd-query").val())
-            $.post(url);
-        })
+            $("#snd").on("submit", function (event) {
+                event.preventDefault();
+                const url = "../send/?target=display2&query=" + encodeURIComponent($("#snd-query").val())
+                $.post(url);
+            })
 
 
-        $("#sign").on("click", function () {
-            $.post("../send/?target=sign&query=");
-        });
+            $("#sign").on("click", function () {
+                $.post("../send/?target=sign&query=");
+            });
 
-        $("#clear").on("click", function () {
-            $.post("../send/?target=clear&query=");
-        });
+            $("#clear").on("click", function () {
+                $.post("../send/?target=clear&query=");
+            });
 
-        $("#hide-all").on("click", function () {
-            $("#answers input:checkbox").not("#correct-sound").prop("checked", true);
+            $("#hide-all").on("click", function () {
+                $("#answers input:checkbox").not("#correct-sound").prop("checked", true);
 
-        })
-        $("#show-all").on("click", function () {
-            $("#answers input:checkbox").not("#correct-sound").prop("checked", false);
+            })
+            $("#show-all").on("click", function () {
+                $("#answers input:checkbox").not("#correct-sound").prop("checked", false);
 
-        })
+            })
 
-        $("#answers").on("submit", function (event) {
-            event.preventDefault();
-            let answers = [];
-            for (let i = 1; i <= 6; i++) {
-                const answer = $(`#answer${i}`).val();
-                const points = $(`#points${i}`).val();
-                if (!answer || !points) {
-                    continue;
+            function refresh_questions() {
+                $("#save-select").children().not("#new-save").remove();
+                $.getJSON("../questions/", function (data) {
+                    data.forEach(function (question) {
+                        $("#save-select").append($("<option>", {
+                            value: question.question_id,
+                            text: question.content
+                        }));
+                    });
+                })
+
+
+            }
+
+            refresh_questions()
+
+            function save_answers() {
+                const contents = $("#answers input[type=text]");
+                const points = $("#answers input[type=number]");
+                let answers = [];
+                for (let i = 0; i < 6; i++) {
+                    if (!contents.eq(i).val() || !points.eq(i).val()) {
+                        continue;
+                    }
+                    answers.push({
+                        content: contents.eq(i).val(),
+                        points: parseInt(points.eq(i).val())
+                    });
                 }
-                answers.push({
-                    answer: answer,
-                    points: points,
-                    hidden: $(`#hidden${i}`).prop("checked"),
+
+                const question = $("#save-select :selected").val();
+                if (question === "new-question") {
+                    const content = prompt("enter new question");
+                    fetch("../questions/", {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            content: content,
+                            answers: answers
+                        })
+                    });
+                } else {
+                    fetch("../answers/?id=" + encodeURIComponent(question), {
+                        method: "PUT",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(answers)
+                    })
+
+
+                }
+            }
+
+            function load_answer() {
+                const question = $("#save-select :selected").val();
+                // TODO: error handling
+                $.getJSON("../answers/?id=" + encodeURIComponent(question), function (data) {
+                        const contents = $("#answers input[type=text]");
+                        const points = $("#answers input[type=number]");
+                        for (let i = 0; i < 6; i++) {
+                            contents.eq(i).val(data[i].content)
+                            points.eq(i).val(data[i].points)
+                        }
+                    }
+                )
+
+
+            }
+
+            function delete_question() {
+                const question = $("#save-select :selected").val();
+                fetch("../questions/?id=" + encodeURIComponent(question), {
+                    method: "DELETE"
                 });
+                refresh_questions();
             }
 
-            const url = "../send/?target=answers&query=" + encodeURIComponent(JSON.stringify(answers))
-            $.post(url);
-            if ($("#correct-sound").is(":checked")) {
-                $.post("../send/?target=play&query=correct");
+            function clear() {
+                const contents = $("#answers input[type=text]");
+                const points = $("#answers input[type=number]");
+                for (let i = 0; i < 6; i++) {
+                    contents.eq(i).val(undefined)
+                    points.eq(i).val(undefined)
+                }
+
+
             }
-        });
-
-        $("#mistakes button").not("#clear-mistakes").on("click", function () {
-            let url = `../send/?target=mistakes-${$(this).data("side")}&query=${$(this).data("amount")}`
-            $.post(url);
-            if ($("#mistake-sound").is(":checked")) {
-                $.post("../send/?target=play&query=mistake");
-            }
-        })
-
-        $("#clear-mistakes").on("click", function () {
-            $.post("../send/?target=mistakes-left&query=0")
-            $.post("../send/?target=mistakes-right&query=0")
 
 
-        })
+            $("#save-form").on("submit", function (event) {
+                event.preventDefault()
+                switch ($(document.activeElement).val()) {
+                    case "Save":
+                        save_answers();
+                        break;
+                    case "Refresh":
+                        refresh_questions();
+                        break;
+                    case "Load":
+                        clear()
+                        load_answer();
+                        break;
+                    case "Delete":
+                        delete_question();
+                        break;
+                    case "Clear":
+                        clear();
+                        break;
+                }
 
-        $("#message").on("submit", function (event) {
-            event.preventDefault();
-            const url = "../send/?target=message&query=" + encodeURIComponent($("#message-prompt").val());
-            $.post(url);
-        });
+
+            })
+
+            $("#answers").on("submit", function (event) {
+                event.preventDefault();
+                let answers = [];
+                for (let i = 1; i <= 6; i++) {
+                    const answer = $(`#answer${i}`).val();
+                    const points = $(`#points${i}`).val();
+                    if (!answer || !points) {
+                        continue;
+                    }
+                    answers.push({
+                        answer: answer,
+                        points: points,
+                        hidden: $(`#hidden${i}`).prop("checked"),
+                    });
+                }
+
+                const url = "../send/?target=answers&query=" + encodeURIComponent(JSON.stringify(answers))
+                $.post(url);
+                if ($("#correct-sound").is(":checked")) {
+                    $.post("../send/?target=play&query=correct");
+                }
+            });
+
+            $("#mistakes button").not("#clear-mistakes").on("click", function () {
+                let url = `../send/?target=mistakes-${$(this).data("side")}&query=${$(this).data("amount")}`
+                $.post(url);
+                if ($("#mistake-sound").is(":checked")) {
+                    $.post("../send/?target=play&query=mistake");
+                }
+            })
+
+            $("#clear-mistakes").on("click", function () {
+                $.post("../send/?target=mistakes-left&query=0")
+                $.post("../send/?target=mistakes-right&query=0")
 
 
-    })
+            })
+
+            $("#message").on("submit", function (event) {
+                event.preventDefault();
+                const url = "../send/?target=message&query=" + encodeURIComponent($("#message-prompt").val());
+                $.post(url);
+            });
+
+
+        }
+    )
 
 
 </script>

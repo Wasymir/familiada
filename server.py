@@ -1,9 +1,12 @@
 import asyncio
+from typing import Annotated
 
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, Body
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from websockets.exceptions import ConnectionClosed
+
+from database import DataBase, Question, Answer
 
 app = FastAPI()
 
@@ -41,6 +44,31 @@ async def counter(ws: WebSocket):
 @app.post("/send/")
 async def update(target: str, query: str):
     await hub.broadcast({"target": target, "query": query})
-    return
 
+
+db = DataBase()
+
+@app.get("/questions/")
+async def get_questions():
+    return db.get_questions()
+
+
+@app.delete("/questions/", status_code=204)
+async def remove_question(id: int):
+    db.remove_question(id)
+
+
+@app.get("/answers/")
+async def get_answers(id: int):
+    return db.get_answers(id)
+
+
+@app.put("/answers/")
+async def update_answers(id: int, answers: Annotated[list[Answer], Body()]):
+    db.update_answers(id, answers)
+
+
+@app.post("/questions/", status_code=200)
+async def new_question(question: Question):
+    db.add_question(question)
 
