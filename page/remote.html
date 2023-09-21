@@ -57,9 +57,9 @@
 
 
 <form id="save-form">
-    <label for="save-select">Select save:</label>
+    <label for="save-select">Select question:</label>
     <select id="save-select">
-        <option id="new-save" value="new-question">New Save</option>
+        <option id="new-save" value="new-question">New Question</option>
     </select>
     <input type="submit" value="Save">
     <input type="submit" value="Load">
@@ -164,7 +164,7 @@
 
             })
 
-            function refresh_questions() {
+            function refresh_question_list() {
                 $("#save-select").children().not("#new-save").remove();
                 $.getJSON("../questions/", function (data) {
                     data.forEach(function (question) {
@@ -174,13 +174,11 @@
                         }));
                     });
                 })
-
-
             }
 
-            refresh_questions()
+            refresh_question_list()
 
-            function save_answers() {
+            function save_question() {
                 const contents = $("#answers input[type=text]");
                 const points = $("#answers input[type=number]");
                 let answers = [];
@@ -220,7 +218,7 @@
                 }
             }
 
-            function load_answer() {
+            function load_question() {
                 const question = $("#save-select :selected").val();
                 // TODO: error handling
                 $.getJSON("../answers/?id=" + encodeURIComponent(question), function (data) {
@@ -241,7 +239,7 @@
                 fetch("../questions/?id=" + encodeURIComponent(question), {
                     method: "DELETE"
                 });
-                refresh_questions();
+                refresh_question_list();
             }
 
             function clear() {
@@ -260,14 +258,15 @@
                 event.preventDefault()
                 switch ($(document.activeElement).val()) {
                     case "Save":
-                        save_answers();
+                        save_question();
+                        refresh_question_list();
                         break;
                     case "Refresh":
-                        refresh_questions();
+                        refresh_question_list();
                         break;
                     case "Load":
                         clear()
-                        load_answer();
+                        load_question();
                         break;
                     case "Delete":
                         delete_question();
