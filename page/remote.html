@@ -88,6 +88,7 @@
     <label for="points6">Points:</label><input type="number" min="1" max="100" id="points6" name="points6">
     <label for="hidden6">Hidden:</label><input type="checkbox" id="hidden6" name="hidden6" checked="checked"><br>
     <label for="correct-sound">Sound:</label><input type="checkbox" id="correct-sound" name="sound"><br>
+    <label for="final">Final</label><input type="checkbox" id="final" name="final"><br>
     <input type="submit" value="Show answers">
 </form>
 
@@ -298,7 +299,11 @@
                 const url = "../send/?target=answers&query=" + encodeURIComponent(JSON.stringify(answers))
                 $.post(url);
                 if ($("#correct-sound").is(":checked")) {
-                    $.post("../send/?target=play&query=correct");
+                    if ($("#final").is(":checked")) {
+                        $.post("../send/?target=play&query=final");
+                    } else {
+                        $.post("../send/?target=play&query=correct");
+                    }
                 }
             });
 

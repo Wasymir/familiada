@@ -53,6 +53,9 @@
 <audio autoplay id="mistake-sound">
     <source src="../static/mistake.mp3" type="audio/mpeg">
 </audio>
+<audio autoplay id="final">
+    <source src="../static/dzwonki-familiada.mp3" type="audio/mpeg">
+</audio>
 <script>
     $(document).ready(function () {
         // generate board
@@ -184,6 +187,8 @@
                 document.getElementById("correct-sound").play();
             } else if (sound === "mistake") {
                 document.getElementById("mistake-sound").play();
+            } else if (sound === "final") {
+                document.getElementById("final").play();
             }
 
         }
