@@ -13,7 +13,8 @@
         body {
             background-color: black;
             font-family: "Familiada", serif;
-            font-size: 30vh;
+            font-size: 40vh;
+
             color: yellow;
         }
 
@@ -42,7 +43,6 @@
 <body>
 <div id="display">
 </div>
-<button id="fullscreen">&#x26F6;</button>
 <script>
     $(document).ready(function () {
         let team = window.prompt("Which team are you on? [1/2]");
@@ -54,10 +54,6 @@
             }
         })
 
-        $("#fullscreen").on("click", function () {
-            document.body.requestFullscreen();
-            $("#fullscreen").hide();
-        })
 
     })
 </script>
